@@ -1,0 +1,108 @@
+AST_Node (start end) "Base class of all AST nodes" {
+    AST_Statement "Base class of all statements" {
+        AST_Debugger "Represents a debugger statement"
+        AST_Directive (value scope) 'Represents a directive, like "use strict";'
+        AST_SimpleStatement (body) "A statement consisting of an expression, i.e. a = 1 + 2"
+        AST_Block (body) "A body of statements (usually bracketed)" {
+            AST_BlockStatement "A block statement"
+            AST_Scope (directives variables functions uses_with uses_eval parent_scope enclosed cname) "Base class for all statements introducing a lexical scope" {
+                AST_Toplevel (globals) "The toplevel scope"
+                AST_Lambda (name argnames uses_arguments) "Base class for functions" {
+                    AST_Accessor "A setter/getter function"
+                    AST_Function "A function expression"
+                    AST_Defun "A function definition"
+                }
+            }
+            AST_Switch (expression) "A `switch` statement"
+            AST_SwitchBranch "Base class for `switch` branches" {
+                AST_Default "A `default` switch branch"
+                AST_Case (expression) "A `case` switch branch"
+            }
+            AST_Try (bcatch bfinally) "A `try` statement"
+            AST_Catch (argname) "A `catch` node; only makes sense as part of a `try` statement"
+            AST_Finally "A `finally` node; only makes sense as part of a `try` statement"
+        }
+        AST_EmptyStatement "The empty statement (empty block or simply a semicolon)"
+        AST_StatementWithBody (body) "Base class for all statements that contain one nested body: `For`, `ForIn`, `Do`, `While`, `With`" {
+            AST_LabeledStatement (label) "Statement with a label"
+            AST_DWLoop (condition) "Base class for do/while statements" {
+                AST_Do "A `do` statement"
+                AST_While "A `while` statement"
+            }
+            AST_For (init condition step) "A `for` statement"
+            AST_ForIn (init name object) "A `for ... in` statement"
+            AST_With (expression) "A `with` statement"
+            AST_If (condition alternative) "A `if` statement"
+        }
+        AST_Jump "Base class for “jumps” (for now that's `return`, `throw`, `break` and `continue`)" {
+            AST_Exit (value) "Base class for “exits” (`return` and `throw`)" {
+                AST_Return "A `return` statement"
+                AST_Throw "A `throw` statement"
+            }
+            AST_LoopControl (label) "Base class for loop control statements (`break` and `continue`)" {
+                AST_Break "A `break` statement"
+                AST_Continue "A `continue` statement"
+            }
+        }
+        AST_Definitions (definitions) "Base class for `var` or `const` nodes (variable declarations/initializations)" {
+            AST_Var "A `var` statement"
+            AST_Const "A `const` statement"
+        }
+    }
+    AST_VarDef (name value) "A variable declaration; only appears in a AST_Definitions node"
+    AST_Call (expression args) "A function call expression" {
+        AST_New "An object instantiation.  Derives from a function call since it has exactly the same properties"
+    }
+    AST_Seq (car cdr) "A sequence expression (two comma-separated expressions)"
+    AST_PropAccess (expression property) 'Base class for property access expressions, i.e. `a.foo` or `a["foo"]`' {
+        AST_Dot "A dotted property access expression"
+        AST_Sub 'Index-style property access, i.e. `a["foo"]`'
+    }
+    AST_Unary (operator expression) "Base class for unary expressions" {
+        AST_UnaryPrefix "Unary prefix expression, i.e. `typeof i` or `++i`"
+        AST_UnaryPostfix "Unary postfix expression, i.e. `i++`"
+    }
+    AST_Binary (left operator right) "Binary expression, i.e. `a + b`" {
+        AST_Assign "An assignment expression — `a = b + 5`"
+    }
+    AST_Conditional (condition consequent alternative) "Conditional expression using the ternary operator, i.e. `a ? b : c`"
+    AST_Array (elements) "An array literal"
+    AST_Object (properties) "An object literal"
+    AST_ObjectProperty (key value) "Base class for literal object properties" {
+        AST_ObjectKeyVal "A key: value object property"
+        AST_ObjectSetter "An object setter property"
+        AST_ObjectGetter "An object getter property"
+    }
+    AST_Symbol (scope name thedef) "Base class for all symbols" {
+        AST_SymbolAccessor "The name of a property accessor (setter/getter function)"
+        AST_SymbolDeclaration (init) "A declaration symbol (symbol in var/const, function name or argument, symbol in catch)" {
+            AST_SymbolVar "Symbol defining a variable" {
+                AST_SymbolFunarg "Symbol naming a function argument"
+            }
+            AST_SymbolConst "A constant declaration"
+            AST_SymbolDefun "Symbol defining a function"
+            AST_SymbolLambda "Symbol naming a function expression"
+            AST_SymbolCatch "Symbol naming the exception in catch"
+        }
+        AST_Label (references) "Symbol naming a label (declaration)"
+        AST_SymbolRef "Reference to some symbol (not definition/declaration)"
+        AST_LabelRef "Reference to a label symbol"
+        AST_This "The `this` symbol"
+    }
+    AST_Constant "Base class for all constants" {
+        AST_String (value) "A string literal"
+        AST_Number (value) "A number literal"
+        AST_RegExp (value) "A regexp literal"
+        AST_Atom "Base class for atoms" {
+            AST_Null "The `null` atom"
+            AST_NaN "The impossible value"
+            AST_Undefined "The `undefined` value"
+            AST_Hole "A hole in an array"
+            AST_Infinity "The `Infinity` value"
+            AST_Boolean "Base class for booleans" {
+                AST_False "The `false` atom"
+                AST_True "The `true` atom"
+            }
+        }
+    }
+}
